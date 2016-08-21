@@ -1,0 +1,40 @@
+{
+  "variables": {
+  },
+    "builders": [{
+       "vboxmanage": [
+         [ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+         [ "modifyvm", "{{.Name}}", "--cpus", "1" ]
+       ],
+       "type": "virtualbox-iso",
+       "guest_os_type": "RedHat_64",
+       "iso_checksum_type": "md5",
+       "disk_size": "20000",
+       "iso_checksum": "0ca12fe5f28c2ceed4f4084b41ff8a0b",
+       "iso_url": "http://mirrors.ukfast.co.uk/sites/ftp.centos.org/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso",
+       "ssh_username": "vagrant",
+       "ssh_password": "vagrant",
+       "ssh_wait_timeout": "10000s",
+       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+       "shutdown_command": "sudo -S shutdown -P now",
+       "http_directory": "http",
+       "boot_command": [
+         "<wait><esc><esc>",
+         "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/kickstart.cfg<enter>"
+       ]
+  }],
+     "provisioners": [{
+       "type": "shell",
+       "scripts": [
+           "scripts/basepackages.sh",
+           "scripts/vagrant.sh",
+           "scripts/vboxguestadditons.sh"
+       ]
+  }],
+     "post-processors": [{
+           "type": "vagrant",
+           "compression_level": "9",
+           "output": "builds/vbox-centos68.box",
+           "only": ["virtualbox-iso"]
+  }]
+}
